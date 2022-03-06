@@ -1,0 +1,23 @@
+*{
+    margin:0;
+    padding: 0;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.board {
+    font-size: 30px;
+}
+.row{
+    display: flex;
+    gap: 1rem;
+}
+.field{
+    width: 35px;
+    height: 35px;
+    background-color: yellow;
+}
