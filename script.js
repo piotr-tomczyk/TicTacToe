@@ -1,4 +1,4 @@
-const Player = (name, sign) =>{
+const Player = (name, sign) => {
     let PlayerName = name;
     let PlayerSign = sign;
     const getName = ()=>{
@@ -45,7 +45,6 @@ const gameboard = (() => {
 })();
 const gameController = (() => {
     var Omove = false;
-    var Over = false;
     var win = "";
     const Player1 = Player("1", "X");
     const Player2 = Player("2", "O");
@@ -56,6 +55,30 @@ const gameController = (() => {
             if(gameboard.changeBoard(x, y, "O")){
                 Omove = !Omove;
                 win = checkWin();
+                if (win != ""){
+                    if (win == Player1.getSign()){
+                        alert(Player1.getSign() + "WINS!");
+                        gameboard.clearBoard();
+                    }
+                    else if (win == Player2.getSign()){
+                        alert(Player2.getSign() + "WINS!");
+                        gameboard.clearBoard();
+                    }
+                    else if(win == "DRAW"){
+                        alert("DRAW");
+                        gameboard.clearBoard();
+                    }
+                    displayController.fillTheBoard(gameboard.getBoard());
+                    return;
+                }
+                displayController.changeSign(x, y);
+            }
+            return;
+        }
+        if(gameboard.changeBoard(x, y, "X")){
+            Omove = !Omove;
+            win = checkWin();
+            if (win != ""){
                 if (win == Player1.getSign()){
                     alert(Player1.getSign() + "WINS!");
                     gameboard.clearBoard();
@@ -69,25 +92,9 @@ const gameController = (() => {
                     gameboard.clearBoard();
                 }
                 displayController.fillTheBoard(gameboard.getBoard());
+                return;
             }
-            return;
-        }
-        if(gameboard.changeBoard(x, y, "X")){
-            Omove = !Omove;
-            win = checkWin();
-            if (win == Player1.getSign()){
-                alert(Player1.getSign() + "WINS!");
-                gameboard.clearBoard();
-            }
-            else if (win == Player2.getSign()){
-                alert(Player2.getSign() + "WINS!");
-                gameboard.clearBoard();
-            }
-            else if(win == "DRAW"){
-                alert("DRAW");
-                gameboard.clearBoard();
-            }
-            displayController.fillTheBoard(gameboard.getBoard());
+            displayController.changeSign(x, y);
         }
         return;
     };
@@ -95,42 +102,18 @@ const gameController = (() => {
         let board = gameboard.getBoard();
         for (var i = 0; i < 3; i++){
             if(board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != "" && board[i][1] != "" && board[i][2] != ""){
-                if(Player1.getSign() == board[i][0]){
-                    console.log(Player1.getSign() + "WINS!");
-                }
-                else{
-                    console.log(Player2.getSign() + "WINS!");
-                }
                 return board[i][0];
             }
         }
         for (var i = 0; i < 3; i++){
             if(board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] != "" && board[1][i] != "" && board[2][i] != ""){
-                if(Player1.getSign() == board[0][i]){
-                    console.log(Player1.getSign() + "WINS!");
-                }
-                else{
-                    console.log(Player2.getSign() + "WINS!");
-                }
                 return board[0][i];
             }
         }
         if(board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != "" && board[1][1] != "" && board[2][2] != ""){
-            if(Player1.getSign() == board[0][0]){
-                console.log(Player1.getSign() + "WINS!");
-            }
-            else{
-                console.log(Player2.getSign() + "WINS!");
-            }
             return board[0][0];
         }
         if(board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != "" && board[1][1] != "" && board[2][0] != ""){
-            if(Player1.getSign() == board[0][2]){
-                console.log(Player1.getSign() + "WINS!");
-            }
-            else{
-                console.log(Player2.getSign() + "WINS!");
-            }
             return board[0][2];
         }
         var counter = 0;
@@ -142,9 +125,9 @@ const gameController = (() => {
             }
         }
         if(counter == 9){
-            console.log("DRAW");
             return "DRAW";
         }
+        return "";
     };
     const startGame = () => {
         displayController.fillTheBoard(gameboard.getBoard());
@@ -180,13 +163,28 @@ const displayController = (() => {
             elements[0].parentNode.removeChild(elements[0]);
         }
     };
+    const changeSign = (x, y) => {
+        var board = gameboard.getBoard();
+        var elements = document.getElementsByClassName("row");
+        for (var i = 0; i < elements.length; i++){
+            var childLenght = elements[i].childNodes.length;
+            for (var j = 0; j < childLenght; j++){
+                if (elements[i].childNodes[j].id[0] == x.toString() && elements[i].childNodes[j].id[1] == y.toString()){
+                    elements[i].childNodes[j].textContent = board[x][y];
+                    document.body.appendChild(parentDiv);
+                    return;
+                }
+            }
+        }
+    };
     const fillTheBoard = (board) => {
         deleteBoard();
         createBoard(board);
         document.body.appendChild(parentDiv);
     }
     return {
-        fillTheBoard
+        fillTheBoard, 
+        changeSign
     };
 })();
 gameController.startGame();
